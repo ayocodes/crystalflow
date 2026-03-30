@@ -18,6 +18,10 @@ import { compareIndexes, parseIndexData } from '../jobs/consensus.js';
 import { distributeRewards } from '../jobs/rewards.js';
 import { addIndex, type StoredIndex } from '../intel/index-store.js';
 
+interface TaggedWebSocket extends WebSocket {
+  __agentId?: string;
+}
+
 const connections = new Map<string, WebSocket>();
 
 export function sendToAgent(agentId: string, message: WSMessageOut): void {
@@ -100,7 +104,7 @@ function handleMessage(agentId: string | null, ws: WebSocket, raw: string): void
       connections.set(msg.agentId, ws);
 
       // Tag the ws so we know who it is on disconnect
-      (ws as any).__agentId = msg.agentId;
+      (ws as TaggedWebSocket).__agentId = msg.agentId;
 
       sendToAgent(msg.agentId, { type: 'agent:connected', agentId: msg.agentId });
 
@@ -200,12 +204,12 @@ export function attachWebSocket(server: Server): WebSocketServer {
     console.log('[ws] new connection');
 
     ws.on('message', (data) => {
-      const agentId = (ws as any).__agentId as string | undefined;
+      const agentId = (ws as TaggedWebSocket).__agentId;
       handleMessage(agentId ?? null, ws, data.toString());
     });
 
     ws.on('close', () => {
-      const agentId = (ws as any).__agentId as string | undefined;
+      const agentId = (ws as TaggedWebSocket).__agentId;
       if (agentId) {
         connections.delete(agentId);
         removeAgent(agentId);

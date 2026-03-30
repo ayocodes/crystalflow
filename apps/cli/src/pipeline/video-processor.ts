@@ -36,11 +36,9 @@ export class VideoProcessor {
   async processVideo(videoFile: Buffer | ArrayBuffer, filename: string = 'video.mp4'): Promise<SceneData[]> {
     // Convert to ArrayBuffer
     let arrayBuffer: ArrayBuffer;
-    if (Buffer.isBuffer(videoFile)) {
-      arrayBuffer = new Uint8Array(videoFile).buffer as ArrayBuffer;
-    } else {
-      arrayBuffer = videoFile;
-    }
+    arrayBuffer = Buffer.isBuffer(videoFile)
+      ? (videoFile.buffer.slice(videoFile.byteOffset, videoFile.byteOffset + videoFile.length) as ArrayBuffer)
+      : videoFile;
 
     const scenes: SceneData[] = [];
     try {

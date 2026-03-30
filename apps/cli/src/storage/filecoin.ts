@@ -38,10 +38,11 @@ export class FilecoinStorage implements StorageProvider {
       metadata: { app: "vidgrid", ...metadata },
     });
 
-    // Normalize PieceCID to string
+    // Synapse SDK returns pieceCid as a CID object (with .toV1()) or a plain string.
+    // Normalize to a V1 CID string for consistent storage across providers.
     const cid =
       result.pieceCid && typeof result.pieceCid === "object" && "toV1" in result.pieceCid
-        ? (result.pieceCid as { toV1: () => { toString: () => string } }).toV1().toString()
+        ? String((result.pieceCid as { toV1: () => unknown }).toV1())
         : String(result.pieceCid);
 
     return { cid, size: result.size, provider: "filecoin" };
