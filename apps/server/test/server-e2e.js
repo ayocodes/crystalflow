@@ -1,6 +1,6 @@
 /**
  * E2E test for VidGrid signal server.
- * Run: node test.js (server must be running on port 3001)
+ * Run: node test/server-e2e.js (server must be running on port 3001)
  */
 import WebSocket from "ws";
 

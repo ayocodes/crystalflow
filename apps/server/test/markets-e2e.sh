@@ -3,7 +3,7 @@
 # Starts anvil, deploys contracts, tests market lifecycle + server REST API.
 set -euo pipefail
 
-ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
 CONTRACTS_DIR="$ROOT/apps/contracts"
 SERVER_DIR="$ROOT/apps/server"
 PORT=4446

@@ -3,7 +3,7 @@
 # Starts the signal server, submits index results, validates consensus + rewards.
 set -euo pipefail
 
-ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
 SERVER_DIR="$ROOT/apps/server"
 PORT=4445
 SERVER_PID=""
