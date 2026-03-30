@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import { createJob, getJob, getAllJobs, submitResult, clearAll } from '../jobs/index.js';
-import { onJobCreated } from '../ws/index.js';
+import { onJobCreated, broadcast } from '../ws/index.js';
+import { compareIndexes } from '../jobs/consensus.js';
+import { distributeRewards } from '../jobs/rewards.js';
 import type { IndexResult } from '../types.js';
 
 const router = Router();
@@ -58,6 +60,29 @@ router.post('/:jobId/result', (req, res) => {
   }
 
   const updated = submitResult(req.params.jobId, result);
+  if (!updated) {
+    res.status(404).json({ error: 'Job not found' });
+    return;
+  }
+
+  // Run consensus when all results are in
+  if (updated.status === 'completed') {
+    const consensusResult = compareIndexes(updated.results);
+    const rewards = distributeRewards(consensusResult);
+
+    updated.consensusStatus = consensusResult.consensusReached ? 'reached' : 'failed';
+    updated.consensus = {
+      clusteredAgents: consensusResult.clusteredAgents,
+      outlierAgents: consensusResult.outlierAgents,
+      fastestAgent: consensusResult.fastestAgent,
+      similarityScores: consensusResult.similarityScores,
+      rewards,
+    };
+
+    broadcast({ type: 'job:consensus', jobId: updated.id, consensus: updated.consensus });
+    broadcast({ type: 'job:completed', jobId: updated.id });
+  }
+
   res.json(updated);
 });
 

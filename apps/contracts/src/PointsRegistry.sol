@@ -14,6 +14,7 @@ contract PointsRegistry {
     address public predictionMarket;
     address public convictionRegistry;
     address public owner;
+    uint256 public totalBurned;
 
     // Events
     event PointsAwarded(address indexed user, uint256 amount, string reason);
@@ -22,10 +23,13 @@ contract PointsRegistry {
         address predictionMarket,
         address convictionRegistry
     );
+    event RewardsDistributed(address[] agents, uint256[] amounts);
+    event PointsBurned(uint256 amount);
 
     // Errors
     error Unauthorized();
     error InvalidAddress();
+    error LengthMismatch();
 
     constructor() {
         owner = msg.sender;
@@ -61,7 +65,30 @@ contract PointsRegistry {
         emit PointsAwarded(user, amount, "Platform activity");
     }
 
+    function distributeRewards(address[] calldata agents, uint256[] calldata amounts) external {
+        if (msg.sender != owner) revert Unauthorized();
+        if (agents.length != amounts.length) revert LengthMismatch();
+
+        for (uint256 i = 0; i < agents.length; i++) {
+            points[agents[i]] += amounts[i];
+        }
+
+        emit RewardsDistributed(agents, amounts);
+    }
+
+    function burnPoints(uint256 amount) external {
+        if (msg.sender != owner) revert Unauthorized();
+
+        totalBurned += amount;
+
+        emit PointsBurned(amount);
+    }
+
     function getPoints(address user) external view returns (uint256) {
         return points[user];
+    }
+
+    function getTotalBurned() external view returns (uint256) {
+        return totalBurned;
     }
 }

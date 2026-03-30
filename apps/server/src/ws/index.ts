@@ -14,6 +14,8 @@ import {
   submitResult,
   getPendingJobs,
 } from '../jobs/index.js';
+import { compareIndexes } from '../jobs/consensus.js';
+import { distributeRewards } from '../jobs/rewards.js';
 
 const connections = new Map<string, WebSocket>();
 
@@ -124,7 +126,25 @@ function handleMessage(agentId: string | null, ws: WebSocket, raw: string): void
       setAgentStatus(msg.result.agentId, 'idle');
 
       if (job.status === 'completed') {
+        // Run consensus scoring
+        const consensusResult = compareIndexes(job.results);
+
+        // Calculate reward distribution
+        const rewards = distributeRewards(consensusResult);
+
+        // Attach consensus data to job
+        job.consensusStatus = consensusResult.consensusReached ? 'reached' : 'failed';
+        job.consensus = {
+          clusteredAgents: consensusResult.clusteredAgents,
+          outlierAgents: consensusResult.outlierAgents,
+          fastestAgent: consensusResult.fastestAgent,
+          similarityScores: consensusResult.similarityScores,
+          rewards,
+        };
+
+        broadcast({ type: 'job:consensus', jobId: job.id, consensus: job.consensus });
         broadcast({ type: 'job:completed', jobId: job.id });
+
         // Re-check pending jobs since agents are now free
         drainPendingJobs();
       }

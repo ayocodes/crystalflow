@@ -21,6 +21,20 @@ export interface IndexResult {
   storageCid?: string;
 }
 
+export interface RewardBreakdown {
+  agentId: string;
+  amount: number;
+  role: 'fastest' | 'confirming' | 'protocol' | 'burned';
+}
+
+export interface ConsensusData {
+  clusteredAgents: string[];
+  outlierAgents: string[];
+  fastestAgent: string;
+  similarityScores: Record<string, number>;
+  rewards: RewardBreakdown[];
+}
+
 export interface Job {
   id: string;
   videoUrl: string;
@@ -30,6 +44,7 @@ export interface Job {
   assignedTo: string[];
   results: IndexResult[];
   consensusStatus?: ConsensusStatus;
+  consensus?: ConsensusData;
 }
 
 // WebSocket message types — inbound (agent → server)
@@ -44,4 +59,5 @@ export type WSMessageOut =
   | { type: 'job:assigned'; job: Job }
   | { type: 'job:new'; job: Job }
   | { type: 'job:completed'; jobId: string }
+  | { type: 'job:consensus'; jobId: string; consensus: ConsensusData }
   | { type: 'error'; message: string };
