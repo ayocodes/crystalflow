@@ -14,6 +14,7 @@ contract PredictionMarket {
     // Constants
     uint256 public constant MARKET_DURATION = 2700; // 45 minutes
     uint256 public constant WINNER_POINTS = 5;
+    uint256 public constant MAX_STORED_ACTIVITIES = 1000;
 
     // Structs
     struct Market {
@@ -152,7 +153,9 @@ contract PredictionMarket {
             timestamp: block.timestamp
         });
         marketActivities[marketId].push(activity);
-        allActivities.push(activity);
+        if (allActivities.length < MAX_STORED_ACTIVITIES) {
+            allActivities.push(activity);
+        }
 
         emit MarketCreated(marketId, videoId, question, msg.sender, expiresAt);
 
@@ -197,11 +200,18 @@ contract PredictionMarket {
             timestamp: block.timestamp
         });
         marketActivities[marketId].push(activity);
-        allActivities.push(activity);
+        if (allActivities.length < MAX_STORED_ACTIVITIES) {
+            allActivities.push(activity);
+        }
 
         emit VoteCast(marketId, msg.sender, isYes, amount);
     }
 
+    /**
+     * @notice Close an expired market. Permissionless by design -- anyone can
+     *         close a market once it has passed its expiry. This is intentional
+     *         for the hackathon to avoid relying on a single keeper.
+     */
     function closeMarket(string memory marketId) external {
         Market storage market = markets[marketId];
         if (bytes(market.id).length == 0) revert MarketNotFound();
@@ -218,7 +228,9 @@ contract PredictionMarket {
             timestamp: block.timestamp
         });
         marketActivities[marketId].push(activity);
-        allActivities.push(activity);
+        if (allActivities.length < MAX_STORED_ACTIVITIES) {
+            allActivities.push(activity);
+        }
 
         emit MarketClosed(marketId);
     }
@@ -258,7 +270,9 @@ contract PredictionMarket {
             timestamp: block.timestamp
         });
         marketActivities[marketId].push(activity);
-        allActivities.push(activity);
+        if (allActivities.length < MAX_STORED_ACTIVITIES) {
+            allActivities.push(activity);
+        }
 
         emit MarketResolved(marketId, winningSide, market.yesVotes, market.noVotes);
     }

@@ -41,7 +41,11 @@ contract PointsRegistry {
         address _convictionRegistry
     ) external {
         if (msg.sender != owner) revert Unauthorized();
-        if (_videoRegistry == address(0)) {
+        if (
+            _videoRegistry == address(0) ||
+            _predictionMarket == address(0) ||
+            _convictionRegistry == address(0)
+        ) {
             revert InvalidAddress();
         }
 
