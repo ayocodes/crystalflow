@@ -1,0 +1,12 @@
+version: '3.8'
+
+# TODO: Configure multi-agent setup
+# This is a placeholder for future docker-compose configuration
+# intended for running multiple agent services in containers
+
+services:
+  # Placeholder for future services
+  # - cli
+  # - server
+  # - dashboard
+  # - contracts (for local testing)

@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+apps/cli/dist/
+apps/contracts/out/
+apps/contracts/cache/
+apps/contracts/broadcast/
+.next/
+
+# Environment
+.env
+.env.local
+.env*.local
+!.env.example
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Database
+*.sqlite
+*.db
+*.db-*
+
+# Misc
+output.txt
+tmp/
+.mastra/
+context/
