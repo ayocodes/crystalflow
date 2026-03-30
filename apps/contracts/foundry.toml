@@ -1,0 +1,24 @@
+[profile.default]
+src = "src"
+out = "out"
+script = "script"
+test = "test"
+libs = ["../../lib"]
+solc = "0.8.24"
+optimizer = true
+optimizer_runs = 200
+via_ir = false
+evm_version = "shanghai"
+fs_permissions = [{ access = "read", path = "./" }]
+
+[fmt]
+line_length = 120
+tab_width = 4
+bracket_spacing = true
+int_types = "long"
+multiline_func_header = "attributes_first"
+quote_style = "double"
+number_underscore = "thousands"
+
+[rpc_endpoints]
+anvil = "http://127.0.0.1:8545"
