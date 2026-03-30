@@ -58,8 +58,8 @@ export function NetworkProvider({ children }: { children: ReactNode }) {
   // Poll REST API for initial state + periodic refresh
   useEffect(() => {
     const poll = () => {
-      api.getAgents().then((data) => setAgents(data as AgentInfo[])).catch(() => {});
-      api.getJobs().then((data) => setJobs(data as Job[])).catch(() => {});
+      api.getAgents().then((data) => setAgents(data as AgentInfo[])).catch(err => console.error('[Network]', err));
+      api.getJobs().then((data) => setJobs(data as Job[])).catch(err => console.error('[Network]', err));
     };
     poll();
     const interval = setInterval(poll, 5000);
@@ -74,7 +74,7 @@ export function NetworkProvider({ children }: { children: ReactNode }) {
         case 'agent:connected': {
           const agentId = msg.agentId as string;
           pushEvent(type, `Agent ${agentId} connected`);
-          api.getAgents().then((data) => setAgents(data as AgentInfo[])).catch(() => {});
+          api.getAgents().then((data) => setAgents(data as AgentInfo[])).catch(err => console.error('[Network]', err));
           break;
         }
         case 'job:new': {
@@ -95,13 +95,13 @@ export function NetworkProvider({ children }: { children: ReactNode }) {
         case 'job:completed': {
           const jobId = msg.jobId as string;
           pushEvent(type, `Job ${(jobId).slice(0, 8)} completed`);
-          api.getJobs().then((data) => setJobs(data as Job[])).catch(() => {});
+          api.getJobs().then((data) => setJobs(data as Job[])).catch(err => console.error('[Network]', err));
           break;
         }
         case 'job:consensus': {
           const jobId = msg.jobId as string;
           pushEvent(type, `Consensus reached for job ${(jobId).slice(0, 8)}`);
-          api.getJobs().then((data) => setJobs(data as Job[])).catch(() => {});
+          api.getJobs().then((data) => setJobs(data as Job[])).catch(err => console.error('[Network]', err));
           break;
         }
         default:
