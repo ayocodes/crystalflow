@@ -3,7 +3,7 @@
 # Tests local storage: single file, directory, determinism, content integrity.
 set -euo pipefail
 
-ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
 CLI_DIR="$ROOT/apps/cli"
 PASS=0
 FAIL=0

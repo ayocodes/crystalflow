@@ -3,7 +3,7 @@
 # Starts the signal server, runs CLI commands, validates responses.
 set -euo pipefail
 
-ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
 CLI_DIR="$ROOT/apps/cli"
 SERVER_DIR="$ROOT/apps/server"
 PORT=4444
