@@ -1,3 +1,4 @@
+import sharp from 'sharp';
 import { getCodecName, isCodecSupported, loadLibAVVariant, type CodecName } from './codec-router.js';
 import { SceneDetector } from './scene-detector.js';
 import type { VideoInfo, SceneData, ProcessingProgress, LibAVStream, ProcessorCallbacks } from './types.js';
@@ -83,16 +84,6 @@ export class VideoProcessor {
       }
       const [, c, pkt, frame] = decoderResult;
 
-      // Init MJPEG encoder for scene JPEG capture
-      const [, encC, encFrame, encPkt] = await this.libav.ff_init_encoder("mjpeg", {
-        ctx: {
-          width: videoInfo.width,
-          height: videoInfo.height,
-          pix_fmt: 12, // AV_PIX_FMT_YUVJ420P
-          global_quality: 80
-        }
-      });
-
       this.reportProgress('Reading packets...', 35, 100);
       const [, packetsByStream] = await this.demuxerLibav.ff_read_frame_multi(fmt_ctx, pkt);
       const packets = packetsByStream[videoStream.index] || [];
@@ -138,9 +129,9 @@ export class VideoProcessor {
         const analysis = this.sceneDetector.analyzeFrame(rgbaData, videoInfo.width, videoInfo.height);
         this.log(`Frame at ${packet.dts}: deltaE=${analysis.deltaE.toFixed(2)}, isNewScene=${analysis.isNewScene}`);
         if (analysis.isNewScene) {
-          const encodeFrame = { ...yuvFrame, format: 12 }; // YUVJ420P for MJPEG
-          const jpegPackets = await this.libav.ff_encode_multi(encC, encFrame, encPkt, [encodeFrame]);
-          const jpegBuffer = Buffer.from(jpegPackets[0].data);
+          const jpegBuffer = await sharp(rgbaData, {
+            raw: { width: videoInfo.width, height: videoInfo.height, channels: 4 }
+          }).jpeg({ quality: 85 }).toBuffer();
 
           const timestampSeconds = (packet.dts * timeBase[0]) / timeBase[1];
           const sceneData: SceneData = {
@@ -157,7 +148,6 @@ export class VideoProcessor {
       }
       this.reportProgress('Cleaning up...', 95, 100);
       await this.libav.ff_free_decoder(c, pkt, frame);
-      await this.libav.ff_free_encoder(encC, encFrame, encPkt);
       await this.demuxerLibav.avformat_close_input_js(fmt_ctx);
       await this.demuxerLibav.unlink(filename);
       this.reportProgress('Complete!', 100, 100);
@@ -192,7 +182,7 @@ export class VideoProcessor {
         throw new Error(`Codec ${codecName} is not supported`);
       }
       const timeBase = videoStream.time_base || [1, 30];
-      const duration = videoStream.duration && timeBase ? videoStream.duration * timeBase[0] / timeBase[1] : 0;
+      const duration = videoStream.duration > 0 && timeBase ? videoStream.duration * timeBase[0] / timeBase[1] : 0;
       const fps = timeBase ? timeBase[1] / timeBase[0] : 30;
       const width = await this.libav.AVCodecParameters_width(videoStream.codecpar);
       const height = await this.libav.AVCodecParameters_height(videoStream.codecpar);

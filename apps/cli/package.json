@@ -18,6 +18,7 @@
     "@libav.js/variant-webm": "^6.0.0",
     "@libav.js/variant-webm-vp9": "^6.0.0",
     "commander": "^11.1.0",
+    "sharp": "^0.33.5",
     "viem": "^2.7.0"
   },
   "devDependencies": {
