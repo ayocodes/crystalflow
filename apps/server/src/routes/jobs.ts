@@ -1,8 +1,9 @@
 import { Router } from 'express';
 import { createJob, getJob, getAllJobs, submitResult, clearAll } from '../jobs/index.js';
 import { onJobCreated, broadcast } from '../ws/index.js';
-import { compareIndexes } from '../jobs/consensus.js';
+import { compareIndexes, parseIndexData } from '../jobs/consensus.js';
 import { distributeRewards } from '../jobs/rewards.js';
+import { addIndex, type StoredIndex } from '../intel/index-store.js';
 import type { IndexResult } from '../types.js';
 
 const router = Router();
@@ -81,6 +82,41 @@ router.post('/:jobId/result', (req, res) => {
 
     broadcast({ type: 'job:consensus', jobId: updated.id, consensus: updated.consensus });
     broadcast({ type: 'job:completed', jobId: updated.id });
+
+    // Store winning index in intel layer
+    if (consensusResult.consensusReached && consensusResult.fastestAgent) {
+      const winningResult = updated.results.find(
+        (r) => r.agentId === consensusResult.fastestAgent,
+      );
+      if (winningResult) {
+        const parsed = parseIndexData(winningResult.indexData);
+        if (parsed) {
+          const raw = winningResult.indexData as Record<string, any>;
+          const stored: StoredIndex = {
+            videoId: parsed.videoId,
+            videoUrl: updated.videoUrl,
+            scenes: (raw.scenes ?? parsed.scenes).map((s: any) => ({
+              timestamp: s.timestamp,
+              deltaE: s.deltaE ?? 0,
+              description: s.description,
+              colors: s.colors,
+            })),
+            videoInfo: {
+              duration: parsed.videoInfo.duration,
+              codec: raw.videoInfo?.codec,
+              width: raw.videoInfo?.width,
+              height: raw.videoInfo?.height,
+              fps: raw.videoInfo?.fps,
+            },
+            storageCid: winningResult.storageCid,
+            indexedAt: winningResult.submittedAt,
+            indexedBy: winningResult.agentId,
+            jobId: updated.id,
+          };
+          addIndex(stored);
+        }
+      }
+    }
   }
 
   res.json(updated);

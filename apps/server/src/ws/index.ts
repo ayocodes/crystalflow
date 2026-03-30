@@ -14,8 +14,9 @@ import {
   submitResult,
   getPendingJobs,
 } from '../jobs/index.js';
-import { compareIndexes } from '../jobs/consensus.js';
+import { compareIndexes, parseIndexData } from '../jobs/consensus.js';
 import { distributeRewards } from '../jobs/rewards.js';
+import { addIndex, type StoredIndex } from '../intel/index-store.js';
 
 const connections = new Map<string, WebSocket>();
 
@@ -145,6 +146,41 @@ function handleMessage(agentId: string | null, ws: WebSocket, raw: string): void
         broadcast({ type: 'job:consensus', jobId: job.id, consensus: job.consensus });
         broadcast({ type: 'job:completed', jobId: job.id });
 
+        // Store the winning index in the intel layer
+        if (consensusResult.consensusReached && consensusResult.fastestAgent) {
+          const winningResult = job.results.find(
+            (r) => r.agentId === consensusResult.fastestAgent,
+          );
+          if (winningResult) {
+            const parsed = parseIndexData(winningResult.indexData);
+            if (parsed) {
+              const raw = winningResult.indexData as Record<string, any>;
+              const stored: StoredIndex = {
+                videoId: parsed.videoId,
+                videoUrl: job.videoUrl,
+                scenes: (raw.scenes ?? parsed.scenes).map((s: any) => ({
+                  timestamp: s.timestamp,
+                  deltaE: s.deltaE ?? 0,
+                  description: s.description,
+                  colors: s.colors,
+                })),
+                videoInfo: {
+                  duration: parsed.videoInfo.duration,
+                  codec: raw.videoInfo?.codec,
+                  width: raw.videoInfo?.width,
+                  height: raw.videoInfo?.height,
+                  fps: raw.videoInfo?.fps,
+                },
+                storageCid: winningResult.storageCid,
+                indexedAt: winningResult.submittedAt,
+                indexedBy: winningResult.agentId,
+                jobId: job.id,
+              };
+              addIndex(stored);
+            }
+          }
+        }
+
         // Re-check pending jobs since agents are now free
         drainPendingJobs();
       }
@@ -182,8 +218,8 @@ export function attachWebSocket(server: Server): WebSocketServer {
     });
   });
 
-  // Periodic cleanup of stale agents
-  setInterval(() => {
+  // Periodic cleanup of stale agents (unref so it doesn't block process exit)
+  const wsCleanup = setInterval(() => {
     const stale = cleanupAgents();
     for (const id of stale) {
       const ws = connections.get(id);
@@ -193,6 +229,7 @@ export function attachWebSocket(server: Server): WebSocketServer {
       }
     }
   }, 30_000);
+  wsCleanup.unref();
 
   console.log('[ws] WebSocket server attached');
   return wss;
