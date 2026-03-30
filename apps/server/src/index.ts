@@ -4,6 +4,9 @@ import { attachWebSocket } from './ws/index.js';
 import { startCleanupTimer } from './agents/index.js';
 import agentRoutes from './routes/agents.js';
 import jobRoutes from './routes/jobs.js';
+import intelRoutes from './routes/intel.js';
+import marketRoutes from './routes/markets.js';
+import { startMarketLoop } from './jobs/markets.js';
 
 const PORT = Number(process.env.PORT) || 3001;
 
@@ -37,6 +40,8 @@ app.get('/health', (_req, res) => {
 // Routes
 app.use('/api/agents', agentRoutes);
 app.use('/api/jobs', jobRoutes);
+app.use('/api/intel', intelRoutes);
+app.use('/api/markets', marketRoutes);
 
 // 404
 app.use((_req, res) => {
@@ -53,12 +58,15 @@ app.use((err: Error, _req: express.Request, res: express.Response, _next: expres
 const server = createServer(app);
 attachWebSocket(server);
 startCleanupTimer();
+startMarketLoop();
 
 server.listen(PORT, () => {
   console.log(`\n  VidGrid Signal Server`);
   console.log(`  Port:      ${PORT}`);
   console.log(`  Health:    http://localhost:${PORT}/health`);
   console.log(`  WebSocket: ws://localhost:${PORT}`);
+  console.log(`  Intel:     http://localhost:${PORT}/api/intel/query`);
+  console.log(`  Markets:   http://localhost:${PORT}/api/markets`);
   console.log(`  Ready.\n`);
 });
 
