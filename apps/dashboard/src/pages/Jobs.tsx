@@ -42,6 +42,14 @@ function formatTime(timestamp: number): string {
 }
 
 function truncateUrl(url: string, max = 48): string {
+  // Show just the filename for server file paths
+  if (url.includes('/uploads/')) {
+    const parts = url.split('/');
+    const filename = parts[parts.length - 1];
+    // Strip the timestamp prefix (e.g. "1774943690441-86ou5o-")
+    const clean = filename.replace(/^\d+-[a-z0-9]+-/, '');
+    return clean || filename;
+  }
   if (url.length <= max) return url;
   return url.slice(0, max) + '\u2026';
 }
@@ -355,7 +363,7 @@ function JobDetail({
         <MetaItem label="Job ID" value={job.id} mono />
         <MetaItem label="Submitted By" value={`${job.submittedBy.slice(0, 6)}\u2026${job.submittedBy.slice(-4)}`} mono />
         <MetaItem label="Submitted At" value={formatTime(job.submittedAt)} />
-        <MetaItem label="Video URL" value={job.videoUrl} mono truncate />
+        <MetaItem label="Video" value={truncateUrl(job.videoUrl)} mono truncate />
       </div>
 
       <div className="grid grid-cols-2 gap-6">

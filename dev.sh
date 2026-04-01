@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Starting VidGrid dev environment..."
+echo "Starting CrystalFlow dev environment..."
 
 cleanup() {
   echo ""
@@ -28,7 +28,7 @@ SERVER_PID=$!
 cd ../..
 
 echo ""
-echo "VidGrid running:"
+echo "CrystalFlow running:"
 echo "  Anvil:  PID=$ANVIL_PID (localhost:8545)"
 echo "  Server: PID=$SERVER_PID (localhost:3001)"
 echo ""

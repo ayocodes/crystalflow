@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { homedir } from "node:os";
 import type { StorageProvider, StorageResult } from "./types.js";
 
-const STORAGE_DIR = join(homedir(), ".vidgrid", "storage");
+const STORAGE_DIR = join(homedir(), ".crystalflow", "storage");
 
 export class LocalStorage implements StorageProvider {
   private dir: string;

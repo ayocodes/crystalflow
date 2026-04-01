@@ -2,6 +2,7 @@ import { Command } from "commander";
 import { readFile, readdir, stat } from "node:fs/promises";
 import { join } from "node:path";
 import { createStorage, type StorageResult } from "../storage/index.js";
+import { logAction } from "../identity/index.js";
 
 export const storeCommand = new Command("store")
   .description("Store video index data to Filecoin or local storage")
@@ -47,6 +48,12 @@ export const storeCommand = new Command("store")
             console.log(`  Provider: ${result.provider}`);
           }
         }
+      }
+
+      // Log each stored file
+      for (const r of results) {
+        await logAction("store", { cid: r.cid, size: r.size, provider: r.provider },
+          r.provider === "filecoin" ? "filecoin-calibration" : undefined);
       }
 
       if (opts.json) {

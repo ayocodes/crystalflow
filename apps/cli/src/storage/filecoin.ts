@@ -25,7 +25,7 @@ export class FilecoinStorage implements StorageProvider {
       transport: http(),
     });
 
-    this.synapse = new Synapse({ client, source: "vidgrid" });
+    this.synapse = new Synapse({ client, source: "crystalflow" });
     return this.synapse;
   }
 
@@ -35,7 +35,7 @@ export class FilecoinStorage implements StorageProvider {
     // High-level upload: handles context creation, store, pull, and commit
     const result = await synapse.storage.upload(new Uint8Array(data), {
       copies: 1,
-      metadata: { app: "vidgrid", ...metadata },
+      metadata: { app: "crystalflow", ...metadata },
     });
 
     // Synapse SDK returns pieceCid as a CID object (with .toV1()) or a plain string.

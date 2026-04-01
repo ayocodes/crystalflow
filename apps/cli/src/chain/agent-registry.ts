@@ -1,116 +1,8 @@
 import { getPublicClient, getWalletClient, getAccount } from "./client.js";
 import { AGENT_REGISTRY_ADDRESS } from "./config.js";
-
-const AGENT_REGISTRY_ABI = [
-  {
-    type: "function",
-    name: "register",
-    inputs: [
-      { name: "role", type: "uint8" },
-      { name: "name", type: "string" },
-      { name: "agentURI", type: "string" },
-    ],
-    outputs: [{ name: "agentId", type: "uint256" }],
-    stateMutability: "nonpayable",
-  },
-  {
-    type: "function",
-    name: "getAgent",
-    inputs: [{ name: "agentId", type: "uint256" }],
-    outputs: [
-      {
-        name: "",
-        type: "tuple",
-        components: [
-          { name: "id", type: "uint256" },
-          { name: "owner", type: "address" },
-          { name: "role", type: "uint8" },
-          { name: "name", type: "string" },
-          { name: "agentURI", type: "string" },
-          { name: "registeredAt", type: "uint256" },
-          { name: "active", type: "bool" },
-        ],
-      },
-    ],
-    stateMutability: "view",
-  },
-  {
-    type: "function",
-    name: "getAgentByOwner",
-    inputs: [{ name: "owner", type: "address" }],
-    outputs: [
-      {
-        name: "",
-        type: "tuple",
-        components: [
-          { name: "id", type: "uint256" },
-          { name: "owner", type: "address" },
-          { name: "role", type: "uint8" },
-          { name: "name", type: "string" },
-          { name: "agentURI", type: "string" },
-          { name: "registeredAt", type: "uint256" },
-          { name: "active", type: "bool" },
-        ],
-      },
-    ],
-    stateMutability: "view",
-  },
-  {
-    type: "function",
-    name: "getAgentCount",
-    inputs: [],
-    outputs: [{ name: "", type: "uint256" }],
-    stateMutability: "view",
-  },
-  {
-    type: "function",
-    name: "getAllAgentIds",
-    inputs: [],
-    outputs: [{ name: "", type: "uint256[]" }],
-    stateMutability: "view",
-  },
-  {
-    type: "function",
-    name: "isActiveAgent",
-    inputs: [{ name: "addr", type: "address" }],
-    outputs: [{ name: "", type: "bool" }],
-    stateMutability: "view",
-  },
-  {
-    type: "function",
-    name: "deactivate",
-    inputs: [{ name: "agentId", type: "uint256" }],
-    outputs: [],
-    stateMutability: "nonpayable",
-  },
-  {
-    type: "function",
-    name: "updateURI",
-    inputs: [
-      { name: "agentId", type: "uint256" },
-      { name: "newURI", type: "string" },
-    ],
-    outputs: [],
-    stateMutability: "nonpayable",
-  },
-  {
-    type: "event",
-    name: "AgentRegistered",
-    inputs: [
-      { name: "agentId", type: "uint256", indexed: true },
-      { name: "owner", type: "address", indexed: true },
-      { name: "role", type: "uint8", indexed: false },
-      { name: "name", type: "string", indexed: false },
-    ],
-  },
-  { type: "error", name: "AlreadyRegistered", inputs: [] },
-  { type: "error", name: "AgentNotFound", inputs: [] },
-  { type: "error", name: "NotAgentOwner", inputs: [] },
-  { type: "error", name: "EmptyName", inputs: [] },
-] as const;
+import { agentRegistryAbi } from "../contracts/generated.js";
 
 const ROLES = ["Scout", "Sentinel", "Curator"] as const;
-
 export type RoleName = (typeof ROLES)[number];
 
 function roleToIndex(role: RoleName): number {
@@ -130,19 +22,17 @@ export async function registerAgent(role: RoleName, name: string, agentURI: stri
 
   const hash = await walletClient.writeContract({
     address: AGENT_REGISTRY_ADDRESS,
-    abi: AGENT_REGISTRY_ABI,
+    abi: agentRegistryAbi,
     functionName: "register",
     args: [roleToIndex(role), name, agentURI],
   });
 
   const receipt = await publicClient.waitForTransactionReceipt({ hash });
-
-  // Parse agentId from logs
   const agentIdLog = receipt.logs[0];
-  const agentId = agentIdLog?.topics[1] ? BigInt(agentIdLog.topics[1]) : 0n;
+  const agentId = agentIdLog?.topics[1] ? Number(BigInt(agentIdLog.topics[1])) : 0;
 
   return {
-    agentId: Number(agentId),
+    agentId,
     role,
     name,
     address: walletClient.account.address,
@@ -153,10 +43,9 @@ export async function registerAgent(role: RoleName, name: string, agentURI: stri
 
 export async function getAgent(agentId: number) {
   const publicClient = getPublicClient();
-
   const agent = await publicClient.readContract({
     address: AGENT_REGISTRY_ADDRESS,
-    abi: AGENT_REGISTRY_ABI,
+    abi: agentRegistryAbi,
     functionName: "getAgent",
     args: [BigInt(agentId)],
   });
@@ -175,10 +64,9 @@ export async function getAgent(agentId: number) {
 export async function getStatus() {
   const publicClient = getPublicClient();
   const account = getAccount();
-
   const agent = await publicClient.readContract({
     address: AGENT_REGISTRY_ADDRESS,
-    abi: AGENT_REGISTRY_ABI,
+    abi: agentRegistryAbi,
     functionName: "getAgentByOwner",
     args: [account.address],
   });

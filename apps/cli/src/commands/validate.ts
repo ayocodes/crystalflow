@@ -1,5 +1,6 @@
 import { Command } from "commander";
 import { createStorage } from "../storage/index.js";
+import { logAction } from "../identity/index.js";
 import {
   submitConviction,
   getConvictionCount,
@@ -80,6 +81,15 @@ async function submitConvictionFlow(
   // A more robust approach would parse ConvictionSubmitted event from the tx receipt.
   const count = await getConvictionCount(videoId);
   const convictionIndex = count - 1;
+
+  // Log the conviction
+  await logAction("validate", {
+    convictionIndex,
+    videoId,
+    fact,
+    proofCid: storageResult.cid,
+    challenger: account.address,
+  }, "anvil", result.txHash);
 
   if (json) {
     console.log(

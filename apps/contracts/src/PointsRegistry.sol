@@ -31,8 +31,8 @@ contract PointsRegistry {
     error InvalidAddress();
     error LengthMismatch();
 
-    constructor() {
-        owner = msg.sender;
+    constructor(address _owner) {
+        owner = _owner;
     }
 
     function setContracts(

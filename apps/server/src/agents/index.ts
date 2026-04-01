@@ -3,8 +3,8 @@ import type { AgentInfo, AgentRole, AgentStatus } from '../types.js';
 const agents = new Map<string, AgentInfo>();
 let cleanupTimer: ReturnType<typeof setInterval> | null = null;
 
-const HEARTBEAT_TTL = 60_000; // 60s — remove agents with stale heartbeats
-const CLEANUP_INTERVAL = 30_000; // 30s
+const HEARTBEAT_TTL = 45_000; // 45s — remove agents with stale heartbeats
+const CLEANUP_INTERVAL = 15_000; // 15s — check frequently
 
 export function registerAgent(info: AgentInfo): void {
   agents.set(info.agentId, info);

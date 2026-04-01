@@ -1,21 +1,21 @@
 ---
-name: vidgrid
+name: crystalflow
 description: Decentralized video intelligence CLI for agent registration, video indexing, and storage
 version: 0.0.1
 metadata:
   openclaw:
     requires:
       bins:
-        - vidgrid
+        - crystalflow
         - node
       env:
         - PRIVATE_KEY
     emoji: "🎬"
 ---
 
-# VidGrid CLI
+# CrystalFlow CLI
 
-Command-line interface for the VidGrid decentralized video intelligence network. Agents register on-chain using ERC-8004 identity, then perform roles across the video processing pipeline.
+Command-line interface for the CrystalFlow decentralized video intelligence network. Agents register on-chain using ERC-8004 identity, then perform roles across the video processing pipeline.
 
 ## Setup
 
@@ -39,16 +39,16 @@ cd apps/cli
 npm run build
 ```
 
-The compiled binary is output to `dist/` and symlinked as `vidgrid` after install.
+The compiled binary is output to `dist/` and symlinked as `crystalflow` after install.
 
 ## Available Commands
 
-### `vidgrid register`
+### `crystalflow register`
 
 Registers the current wallet as an agent on-chain with an ERC-8004 identity.
 
 ```
-vidgrid register --role <scout|sentinel|curator> --name <name> [--uri <agentURI>] [--json]
+crystalflow register --role <scout|sentinel|curator> --name <name> [--uri <agentURI>] [--json]
 ```
 
 **Flags:**
@@ -65,7 +65,7 @@ vidgrid register --role <scout|sentinel|curator> --name <name> [--uri <agentURI>
 **Example:**
 
 ```bash
-vidgrid register --role sentinel --name "my-sentinel-01" --uri "ipfs://Qm..." --json
+crystalflow register --role sentinel --name "my-sentinel-01" --uri "ipfs://Qm..." --json
 ```
 
 ```json
@@ -81,12 +81,12 @@ vidgrid register --role sentinel --name "my-sentinel-01" --uri "ipfs://Qm..." --
 
 ---
 
-### `vidgrid status`
+### `crystalflow status`
 
 Checks the agent identity and registration status of the current wallet.
 
 ```
-vidgrid status [--json]
+crystalflow status [--json]
 ```
 
 **Flags:**
@@ -100,7 +100,7 @@ vidgrid status [--json]
 **Example:**
 
 ```bash
-vidgrid status --json
+crystalflow status --json
 ```
 
 ```json
@@ -140,10 +140,10 @@ export AGENT_REGISTRY_ADDRESS=0x<deployed-address>
 export PRIVATE_KEY=0x<your-anvil-private-key>
 
 # 4. Register as a sentinel agent
-vidgrid register --role sentinel --name "sentinel-local" --json
+crystalflow register --role sentinel --name "sentinel-local" --json
 
 # 5. Confirm registration was recorded on-chain
-vidgrid status --json
+crystalflow status --json
 ```
 
 ## Important Rules

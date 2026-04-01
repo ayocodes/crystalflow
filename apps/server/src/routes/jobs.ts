@@ -1,9 +1,10 @@
 import { Router } from 'express';
-import { createJob, getJob, getAllJobs, submitResult, clearAll } from '../jobs/index.js';
+import { createJob, getJob, getAllJobs, getPendingJobs, assignJob, submitResult, clearAll } from '../jobs/index.js';
 import { onJobCreated, broadcast } from '../ws/index.js';
 import { compareIndexes, parseIndexData } from '../jobs/consensus.js';
 import { distributeRewards } from '../jobs/rewards.js';
 import { addIndex, type StoredIndex } from '../intel/index-store.js';
+import { setAgentStatus } from '../agents/index.js';
 import type { IndexResult } from '../types.js';
 
 const router = Router();
@@ -30,6 +31,11 @@ router.get('/', (_req, res) => {
   res.json(getAllJobs());
 });
 
+// GET /api/jobs/pending — list only pending jobs (for agents to discover work)
+router.get('/pending', (_req, res) => {
+  res.json(getPendingJobs());
+});
+
 // GET /api/jobs/:jobId — get specific job with results
 router.get('/:jobId', (req, res) => {
   const job = getJob(req.params.jobId);
@@ -37,6 +43,37 @@ router.get('/:jobId', (req, res) => {
     res.status(404).json({ error: 'Job not found' });
     return;
   }
+  res.json(job);
+});
+
+// POST /api/jobs/:jobId/claim — agent claims a job for processing
+router.post('/:jobId/claim', (req, res) => {
+  const job = getJob(req.params.jobId);
+  if (!job) {
+    res.status(404).json({ error: 'Job not found' });
+    return;
+  }
+
+  const { agentId } = req.body;
+  if (!agentId || typeof agentId !== 'string') {
+    res.status(400).json({ error: 'agentId is required' });
+    return;
+  }
+
+  if (job.status === 'completed') {
+    res.status(409).json({ error: 'Job already completed' });
+    return;
+  }
+
+  // Add agent to assignedTo if not already there
+  if (!job.assignedTo.includes(agentId)) {
+    job.assignedTo.push(agentId);
+  }
+  if (job.status === 'pending') {
+    job.status = 'assigned';
+  }
+
+  console.log(`[jobs] ${agentId} claimed job ${job.id} via REST`);
   res.json(job);
 });
 
@@ -65,6 +102,9 @@ router.post('/:jobId/result', (req, res) => {
     res.status(404).json({ error: 'Job not found' });
     return;
   }
+
+  // Free up the agent
+  setAgentStatus(result.agentId, 'idle');
 
   // Run consensus when all results are in
   if (updated.status === 'completed') {

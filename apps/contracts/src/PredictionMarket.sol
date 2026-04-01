@@ -6,7 +6,7 @@ import "./AgentRegistry.sol";
 
 /**
  * @title PredictionMarket
- * @notice YES/NO prediction markets for VidGrid video convictions
+ * @notice YES/NO prediction markets for CrystalFlow video convictions
  * @dev Simplified vote-based markets. Only registered agents can create/resolve.
  *      Activities stored on-chain for dashboard without graph indexer.
  */

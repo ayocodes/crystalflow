@@ -13,7 +13,7 @@ contract VideoRegistryTest is Test {
     address bob = makeAddr("bob");
 
     function setUp() public {
-        pointsRegistry = new PointsRegistry();
+        pointsRegistry = new PointsRegistry(address(this));
         videoRegistry = new VideoRegistry(address(pointsRegistry));
 
         // Authorize videoRegistry to award points (all three addresses must be non-zero)

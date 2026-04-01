@@ -1,9 +1,7 @@
 import { NavLink, Outlet } from 'react-router-dom';
 import {
-  LayoutDashboard,
+  FolderOpen,
   Users,
-  ListTodo,
-  BrainCircuit,
   Radio,
   Wifi,
   WifiOff,
@@ -11,10 +9,8 @@ import {
 import { useNetwork } from '../providers/NetworkContext';
 
 const navItems = [
-  { to: '/', icon: LayoutDashboard, label: 'Overview' },
+  { to: '/', icon: FolderOpen, label: 'Projects' },
   { to: '/agents', icon: Users, label: 'Agents' },
-  { to: '/jobs', icon: ListTodo, label: 'Jobs' },
-  { to: '/intel', icon: BrainCircuit, label: 'Intelligence' },
 ];
 
 export default function Layout() {
@@ -29,7 +25,7 @@ export default function Layout() {
           <Radio className="h-6 w-6 text-cyan-400" />
           <div>
             <h1 className="font-mono text-sm font-bold tracking-wider text-cyan-400">
-              VIDGRID
+              CRYSTALFLOW
             </h1>
             <p className="font-mono text-[10px] tracking-widest text-slate-500 uppercase">
               Mission Control

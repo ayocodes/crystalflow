@@ -4,6 +4,7 @@ import { createHash } from "node:crypto";
 import { basename, join } from "node:path";
 import { VideoProcessor } from "../pipeline/index.js";
 import type { SceneData } from "../pipeline/index.js";
+import { logAction } from "../identity/index.js";
 
 export const indexCommand = new Command("index")
   .description("Index a video file — detect scenes and extract structured data")
@@ -81,6 +82,17 @@ export const indexCommand = new Command("index")
           process.exit(1);
         }
       }
+
+      // Log to agent_log.json
+      await logAction("index-video", {
+        videoId,
+        filename,
+        scenes: scenes.length,
+        codec: videoInfo?.codec,
+        width: videoInfo?.width,
+        height: videoInfo?.height,
+        duration: videoInfo?.duration,
+      });
 
       // JSON output
       if (opts.json) {

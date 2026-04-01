@@ -252,7 +252,7 @@ describe('F9 Intel E2E', () => {
   // ------------------------------------------------------------------
   // Phase 5: CLI query command
   // ------------------------------------------------------------------
-  it('vidgrid query --json returns structured intelligence', async () => {
+  it('crystalflow query --json returns structured intelligence', async () => {
     try {
       const { stdout } = await execFileAsync(
         'npx',

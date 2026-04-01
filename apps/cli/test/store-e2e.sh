@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# E2E test for: vidgrid store
+# E2E test for: crystalflow store
 # Tests local storage: single file, directory, determinism, content integrity.
 set -euo pipefail
 
@@ -29,7 +29,7 @@ check_json() {
   fi
 }
 
-echo "=== E2E: vidgrid store ==="
+echo "=== E2E: crystalflow store ==="
 echo ""
 
 # ── Build CLI ──
@@ -43,7 +43,7 @@ echo ""
 TMPDIR_E2E=$(mktemp -d)
 STORAGE_DIR=$(mktemp -d)
 
-# Fake index JSON (mimics output of vidgrid index --json)
+# Fake index JSON (mimics output of crystalflow index --json)
 cat > "$TMPDIR_E2E/index.json" <<'ENDJSON'
 {
   "videoId": "abc123def456",
@@ -92,9 +92,9 @@ echo ""
 
 # ── Test 3: Content integrity (stored data matches original) ──
 echo "Test 3: content integrity"
-STORED_PATH="$HOME/.vidgrid/storage/$EXPECTED_CID"
+STORED_PATH="$HOME/.crystalflow/storage/$EXPECTED_CID"
 if [[ -f "$STORED_PATH" ]]; then
-  ok "file exists at ~/.vidgrid/storage/<cid>"
+  ok "file exists at ~/.crystalflow/storage/<cid>"
 else
   fail "file not found at $STORED_PATH"
 fi

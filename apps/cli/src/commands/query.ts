@@ -1,9 +1,9 @@
 import { Command } from 'commander';
 
 export const queryCommand = new Command('query')
-  .description('Query the VidGrid intelligence engine')
+  .description('Query the CrystalFlow intelligence engine')
   .argument('<question>', 'intelligence query (e.g. "road damage near Main St")')
-  .option('--server <url>', 'signal server URL', process.env.VIDGRID_SERVER ?? 'http://localhost:3001')
+  .option('--server <url>', 'signal server URL', process.env.CRYSTALFLOW_SERVER ?? 'http://localhost:3001')
   .option('--json', 'output raw JSON')
   .action(async (question: string, opts: { server: string; json?: boolean }) => {
     try {
@@ -56,7 +56,7 @@ export const queryCommand = new Command('query')
     } catch (err: any) {
       if (err.cause?.code === 'ECONNREFUSED') {
         console.error(`Error: Cannot connect to server at ${opts.server}`);
-        console.error('Is the VidGrid signal server running?');
+        console.error('Is the CrystalFlow signal server running?');
       } else {
         console.error(`Error: ${err.message}`);
       }

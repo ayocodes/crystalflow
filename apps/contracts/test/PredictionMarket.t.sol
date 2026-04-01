@@ -20,7 +20,7 @@ contract PredictionMarketTest is Test {
 
     function setUp() public {
         agentRegistry = new AgentRegistry();
-        pointsRegistry = new PointsRegistry();
+        pointsRegistry = new PointsRegistry(address(this));
         market = new PredictionMarket(address(pointsRegistry), address(agentRegistry));
 
         // Authorize prediction market to award points (all three addresses must be non-zero)

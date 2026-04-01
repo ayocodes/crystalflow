@@ -58,3 +58,41 @@ export interface NetworkEvent {
   data: Record<string, unknown>;
   message: string;
 }
+
+// ── Projects ──────────────────────────────────────────────────────────────
+
+export type VideoStatus = 'pending' | 'processing' | 'completed' | 'failed';
+
+export interface SceneInfo {
+  index: number;
+  timestamp: number;
+  description?: string;
+  deltaE?: number;
+}
+
+export interface VideoInfo {
+  id: string;
+  filename: string;
+  originalName: string;
+  status: VideoStatus;
+  sceneCount: number;
+  jobId?: string;
+  createdAt: number;
+  codec?: string;
+  width?: number;
+  height?: number;
+  fps?: number;
+  duration?: number;
+  scenes?: SceneInfo[];
+}
+
+export interface Project {
+  id: string;
+  name: string;
+  description?: string;
+  videoCount: number;
+  totalScenes: number;
+  status: 'empty' | 'processing' | 'ready';
+  createdAt: number;
+  videos?: VideoInfo[];
+}

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# E2E test for: vidgrid validate
+# E2E test for: crystalflow validate
 # Starts anvil, deploys contracts, tests conviction submission and listing.
 set -euo pipefail
 
@@ -34,7 +34,7 @@ check_json() {
   fi
 }
 
-echo "=== E2E: vidgrid validate ==="
+echo "=== E2E: crystalflow validate ==="
 echo ""
 
 # ── Start Anvil ──

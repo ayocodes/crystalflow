@@ -1,0 +1,24 @@
+{
+  "chain": "localhost",
+  "chainId": 31337,
+  "rpc": "http://127.0.0.1:8545",
+  "deployedAt": "2026-03-31T06:36:53.571Z",
+  "deployer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+  "scopes": {
+    "core": {
+      "status": "completed",
+      "deployedAt": "2026-03-31T06:36:53.636Z",
+      "contracts": {
+        "pointsRegistry": "0x730f749e6f0628f0796e097c2197e4b8e5e3d4f5",
+        "agentRegistry": "0xf4a60d96d3ca708c9f60050d98eef897581fce63",
+        "videoRegistry": "0x32397dd8208916b61d0f54098e4517c31764de25",
+        "predictionMarket": "0xc269877c26fca8a61ae1e5ef5e5f3a9ffb570a01"
+      }
+    },
+    "wire": {
+      "status": "completed",
+      "deployedAt": "2026-03-31T06:36:53.642Z",
+      "contracts": {}
+    }
+  }
+}

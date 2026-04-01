@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# E2E test for: vidgrid discover
+# E2E test for: crystalflow discover
 # Starts the signal server, runs CLI commands, validates responses.
 set -euo pipefail
 
@@ -31,7 +31,7 @@ check_json() {
   fi
 }
 
-echo "=== E2E: vidgrid discover ==="
+echo "=== E2E: crystalflow discover ==="
 echo ""
 
 # ── Build CLI ──

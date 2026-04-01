@@ -43,7 +43,7 @@ export default function Overview() {
           Network Overview
         </h2>
         <p className="mt-1 font-mono text-sm text-slate-400">
-          Real-time VidGrid network status
+          Real-time CrystalFlow network status
         </p>
       </div>
 

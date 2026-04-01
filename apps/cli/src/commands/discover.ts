@@ -15,7 +15,7 @@ const VIDEO_EXTENSIONS = new Set([
 ]);
 
 function getServerUrl(opts: { server?: string }): string {
-  return opts.server || process.env.VIDGRID_SERVER || "http://localhost:3001";
+  return opts.server || process.env.CRYSTALFLOW_SERVER || "http://localhost:3001";
 }
 
 async function submitJob(
@@ -52,7 +52,7 @@ export const discoverCommand = new Command("discover")
       }
 
       const serverUrl = getServerUrl(opts);
-      const agentId = opts.agentId || process.env.VIDGRID_AGENT_ID || "scout";
+      const agentId = opts.agentId || process.env.CRYSTALFLOW_AGENT_ID || "scout";
 
       if (opts.source) {
         await discoverSingle(serverUrl, opts.source, agentId, opts.json);

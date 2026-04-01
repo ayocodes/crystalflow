@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 
 /**
  * @title AgentRegistry
- * @notice On-chain identity registry for VidGrid agents (ERC-8004 pattern)
+ * @notice On-chain identity registry for CrystalFlow agents (ERC-8004 pattern)
  * @dev Each agent gets a unique ID, a role, and a URI pointing to their identity JSON
  */
 contract AgentRegistry {

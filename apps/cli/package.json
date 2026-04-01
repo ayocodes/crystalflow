@@ -1,31 +1,35 @@
 {
-  "name": "vidgrid-cli",
+  "name": "crystalflow-cli",
   "version": "0.0.1",
-  "description": "VidGrid CLI tool",
+  "description": "CrystalFlow CLI tool",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
-    "vidgrid": "./dist/index.js"
+    "crystalflow": "./dist/index.js"
   },
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
     "start": "node dist/index.js",
+    "gen": "wagmi generate",
     "test": "echo 'Run test/*.sh scripts manually'"
   },
   "dependencies": {
+    "@filoz/synapse-core": "^0.3.1",
+    "@filoz/synapse-sdk": "^0.40.0",
     "@libav.js/variant-av1-opus": "^6.0.0",
     "@libav.js/variant-default": "^6.0.0",
     "@libav.js/variant-webm": "^6.0.0",
     "@libav.js/variant-webm-vp9": "^6.0.0",
-    "@filoz/synapse-core": "^0.3.1",
-    "@filoz/synapse-sdk": "^0.40.0",
     "commander": "^11.1.0",
     "sharp": "^0.33.5",
-    "viem": "^2.7.0"
+    "viem": "^2.7.0",
+    "ws": "^8.20.0"
   },
   "devDependencies": {
     "@types/node": "^20.10.0",
+    "@types/ws": "^8.18.1",
+    "@wagmi/cli": "^2.10.0",
     "typescript": "^5.3.3"
   }
 }

@@ -16,7 +16,7 @@ contract PointsRegistryTest is Test {
 
     function setUp() public {
         deployer = address(this);
-        registry = new PointsRegistry();
+        registry = new PointsRegistry(address(this));
         registry.setContracts(videoReg, predMarket, convReg);
     }
 

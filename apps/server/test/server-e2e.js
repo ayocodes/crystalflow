@@ -1,5 +1,5 @@
 /**
- * E2E test for VidGrid signal server.
+ * E2E test for CrystalFlow signal server.
  * Run: node test/server-e2e.js (server must be running on port 3001)
  */
 import WebSocket from "ws";

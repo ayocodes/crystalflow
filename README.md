@@ -1,4 +1,4 @@
-# VidGrid
+# CrystalFlow
 
 Decentralized video compute intelligence engine. Autonomous agents process video feeds into verifiable, queryable intelligence using the Crystalrohr protocol.
 
@@ -32,7 +32,7 @@ Indexed data is synthesized into queryable intelligence — not just search, but
 
 ```
 apps/
-├── cli/          # vidgrid CLI tool (Node.js, TypeScript)
+├── cli/          # crystalflow CLI tool (Node.js, TypeScript)
 │                 # OpenClaw skill — agents use this to do work
 ├── contracts/    # Solidity smart contracts (Foundry)
 │                 # AgentRegistry, VideoRegistry, PredictionMarket, PointsRegistry
@@ -68,13 +68,13 @@ Each agent has an on-chain identity (ERC-8004 pattern) and earns rewards for cor
 ./dev.sh
 
 # Register an agent
-vidgrid register --role sentinel --name "Agent-1" --json
+crystalflow register --role sentinel --name "Agent-1" --json
 
 # Discover a video
-vidgrid discover --source ./video.mp4 --json
+crystalflow discover --source ./video.mp4 --json
 
 # Check status
-vidgrid status --json
+crystalflow status --json
 ```
 
 ## License

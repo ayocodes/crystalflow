@@ -6,6 +6,8 @@ import agentRoutes from './routes/agents.js';
 import jobRoutes from './routes/jobs.js';
 import intelRoutes from './routes/intel.js';
 import marketRoutes from './routes/markets.js';
+import uploadRoutes from './routes/upload.js';
+import projectRoutes, { scenesRouter } from './routes/projects.js';
 import { startMarketLoop } from './jobs/markets.js';
 
 const PORT = Number(process.env.PORT) || 3001;
@@ -15,7 +17,7 @@ const app = express();
 // CORS — allow dashboard and any local dev origin
 app.use((_req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Content-Type');
   if (_req.method === 'OPTIONS') {
     res.sendStatus(204);
@@ -39,9 +41,12 @@ app.get('/health', (_req, res) => {
 
 // Routes
 app.use('/api/agents', agentRoutes);
+app.use('/api/upload', uploadRoutes);
 app.use('/api/jobs', jobRoutes);
 app.use('/api/intel', intelRoutes);
 app.use('/api/markets', marketRoutes);
+app.use('/api/projects', projectRoutes);
+app.use('/api/scenes', scenesRouter);
 
 // 404
 app.use((_req, res) => {
@@ -61,7 +66,7 @@ startCleanupTimer();
 startMarketLoop();
 
 server.listen(PORT, () => {
-  console.log(`\n  VidGrid Signal Server`);
+  console.log(`\n  CrystalFlow Signal Server`);
   console.log(`  Port:      ${PORT}`);
   console.log(`  Health:    http://localhost:${PORT}/health`);
   console.log(`  WebSocket: ws://localhost:${PORT}`);

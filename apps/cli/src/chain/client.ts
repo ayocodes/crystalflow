@@ -1,6 +1,6 @@
 import { createPublicClient, createWalletClient, http } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { anvil } from "./config.js";
+import { appChain } from "./config.js";
 
 export function getAccount() {
   const key = process.env.PRIVATE_KEY;
@@ -12,7 +12,7 @@ export function getAccount() {
 
 export function getPublicClient() {
   return createPublicClient({
-    chain: anvil,
+    chain: appChain,
     transport: http(),
   });
 }
@@ -21,7 +21,7 @@ export function getWalletClient() {
   const account = getAccount();
   return createWalletClient({
     account,
-    chain: anvil,
+    chain: appChain,
     transport: http(),
   });
 }
